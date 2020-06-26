@@ -3,7 +3,7 @@
 This is for educational purposes for expanding my knowledge in a MERN stack.
 
 ## Website
-  Visit a working model: [TheCodingNetork](https://thecoding.network/)
+  Visit a working model: [TheCoding.Netork](https://thecoding.network/)
 
 ## Author
   - Joshua Kelley
