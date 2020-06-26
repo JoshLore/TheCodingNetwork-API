@@ -1,0 +1,22 @@
+{
+  "name": "the-coding-network",
+  "version": "1.0.0",
+  "description": "This is for educational purposes for expanding my knowledge in a MERN stack.",
+  "main": "app.js",
+  "scripts": {
+    "dev": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoshLore/TheCodingNetwork.git"
+  },
+  "author": "Joshua Kelley",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JoshLore/TheCodingNetwork/issues"
+  },
+  "homepage": "https://github.com/JoshLore/TheCodingNetwork#readme",
+  "dependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
