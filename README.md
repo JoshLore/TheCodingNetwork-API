@@ -1,6 +1,7 @@
 # TheCodingNetwork
 
 This is for educational purposes for expanding my knowledge in a MERN stack.
+
 Built with Node.js for a RESTful API running on MongoDB. Front-end built with React. Deployed on DigitalOcean.
 
 ## Website
