@@ -5,7 +5,7 @@ This is for educational purposes for expanding my knowledge in a MERN stack.
 Built with Node.js for a RESTful API running on MongoDB. Front-end built with React. Deployed on DigitalOcean.
 
 ## Website
-  Visit a working model: [TheCoding.Netork](https://thecoding.network/)
+  Visit the working model: [TheCoding.Network](https://thecoding.network/)
 
 ## Author
   - Joshua Kelley
