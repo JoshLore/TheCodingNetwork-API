@@ -1,11 +1,20 @@
 // Initiliazing express.js
 const express = require("express");
+const morgan = require("morgan");
 
 const app = express();
 
-// Homepage Route
-app.get('/', (req, res) => {
-    res.send("Welcome to the start.");
-});
+// Bring in routes
+const postRoutes = require('./routes/post');
 
-app.listen(3000);
+// Middleware
+app.use(morgan("dev"));
+
+// Homepage Route
+app.use('/', postRoutes);
+
+// Listening to port
+const port = 8080;
+app.listen(port, () => {
+    console.log(`A Node.js API is litening on port ${port}`)
+});
