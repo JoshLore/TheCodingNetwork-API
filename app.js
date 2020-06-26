@@ -1,8 +1,10 @@
-// Initiliazing express.js
+// Requiring npm packages
 const express = require("express");
 const morgan = require("morgan");
 const mongoose = require("mongoose")
 const dotenv = require("dotenv");
+const bodyParser = require("body-parser");
+const expressValidator = require('express-validator');
 
 // Initilize packages
 const app = express();
@@ -19,6 +21,8 @@ const postRoutes = require('./routes/post');
 
 // Middleware
 app.use(morgan("dev"));
+app.use(bodyParser.json());
+app.use(expressValidator());
 app.use('/', postRoutes);
 
 // Listening to port
