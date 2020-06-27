@@ -1,21 +1,22 @@
-# TheCodingNetwork
+# TheCodingNetwork API
+
+A social network for programmers.
 
 This is for educational purposes for expanding my knowledge in a MERN stack.
 
-Built with Node.js for a RESTful API running on MongoDB. Front-end built with React. Deployed on DigitalOcean.
+Built with Node.js. Server running  on MongoDB.
 
 ## Website
-  Visit the working model: [TheCoding.Network](https://thecoding.network/)
+  Visit the working website: [TheCoding.Network](https://thecoding.network/)
 
 ## Author
   - Joshua Kelley
 
 ## Built With
 
-  * [Node.js](https://nodejs.org/) Node.js® is a JavaScript runtime built on Chrome's V8 JavaScript engine.
-  * [React](https://facebook.github.io/react/docs/hello-world.html) A javascript library for building user interfaces.
+  * [Node.js](https://nodejs.org/) Node.js is a JavaScript runtime built on Chrome's V8 JavaScript engine.
   * [MongoDB](https://www.mongodb.com/) MongoDB is a general purpose, document-based, distributed database built for modern application developers and for the cloud era.
-  * [DigitalOcean](https://facebook.github.io/react/docs/hello-world.html) DigitalOcean provides developers cloud services that help to deploy and scale applications that run simultaneously on multiple computers.
+  
   
 ## License
 
