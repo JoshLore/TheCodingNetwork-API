@@ -1,9 +1,10 @@
 {
-  "name": "the-coding-network-api",
+  "name": "thecodingnetwork-api",
   "version": "1.0.0",
-  "description": "This is for educational purposes for expanding my knowledge in a MERN stack.",
+  "description": "A social network for programmers. This is for educational purposes for expanding my knowledge in a MERN stack.",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "dev": "nodemon app.js"
   },
   "repository": {
