@@ -24,8 +24,8 @@ exports.userById = (req, res, next, id) => {
 // Checks if the user has authorization
 exports.hasAuthorization = (req, res, next) => {
     const authorized = req.profile && req.auth && req.profile._id === req.auth._id;
-    if(!authorized) {
-        return  res.status(403).json({
+    if (!authorized) {
+        return res.status(403).json({
             error: "User is not authorized to perform this action."
         });
     }
@@ -33,26 +33,26 @@ exports.hasAuthorization = (req, res, next) => {
 
 // Get all users in database
 exports.allUsers = (req, res) => {
-    
+
     User.find((err, users) => {
 
         // Error handling
-        if(err) {
+        if (err) {
             return res.status(400).json({
                 error: err
             });
         }
 
-        // Respond with list of users
-        res.json({ users });
+        // Respond with array of users
+        res.json(users);
     })
-    // Only return name, email, and time of creation.
-    .select("name email updated created");
+        // Only return name, email, and time of creation.
+        .select("name email updated created");
 };
 
 // Get a single user
 exports.getUser = (req, res) => {
-    
+
     // Returning profile (without password and salt)
     req.profile.hashed_password = undefined;
     req.profile.salt = undefined;
@@ -71,7 +71,7 @@ exports.updateUser = (req, res, next) => {
     user.save((err) => {
 
         // Error handling
-        if(err) {
+        if (err) {
             return res.status(400).json({
                 error: "You are not authorized to perform this action."
             });
@@ -90,12 +90,12 @@ exports.deleteUser = (req, res, next) => {
     user.remove((err, user) => {
 
         // Error handling
-        if(err) {
+        if (err) {
             return res.status(400).json({
                 error: err
             });
         }
 
-        res.json({ message: "User deleted successfully!"});
+        res.json({ message: "User deleted successfully!" });
     });
 }
