@@ -11,7 +11,7 @@ Built with Node.js. Server running  on MongoDB.
 
   Visit the working website: [TheCoding.Network](https://thecoding.network/)
 
-  Check out the frontend on GitHub: [TheCodingNetwork-Frontend](https://github.com/JoshLore/TheCodingNetwork-API)
+  Check out the frontend on GitHub: [TheCodingNetwork-Frontend](https://github.com/JoshLore/TheCodingNetwork-Frontend)
 
 
 ## Install
