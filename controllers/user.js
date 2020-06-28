@@ -1,5 +1,7 @@
 const _ = require('lodash');
 const User = require('../models/user');
+const fs = require('fs');
+const formidable = require('formidable');
 
 // Get user by id for authorization
 exports.userById = (req, res, next, id) => {
@@ -60,28 +62,80 @@ exports.getUser = (req, res) => {
 };
 
 // Update a user
+// exports.updateUser = (req, res, next) => {
+//     let user = req.profile;
+
+//     // Using lodash.extend to mutate the user
+//     user = _.extend(user, req.body);
+//     user.updated = Date.now();
+
+//     // Save to database
+//     user.save((err) => {
+
+//         // Error handling
+//         if (err) {
+//             return res.status(400).json({
+//                 error: "You are not authorized to perform this action."
+//             });
+//         }
+
+//         // Returning profile (without password and salt)
+//         user.hashed_password = undefined;
+//         user.salt = undefined;
+//         res.json({ user });
+//     });
+// };
+
+// Updates user profile
 exports.updateUser = (req, res, next) => {
-    let user = req.profile;
-
-    // Using lodash.extend to mutate the user
-    user = _.extend(user, req.body);
-    user.updated = Date.now();
-
-    // Save to database
-    user.save((err) => {
+    let form = new formidable.IncomingForm();
+    form.keepExtensions = true;
+    form.parse(req, (err, fields, files) => {
 
         // Error handling
         if (err) {
             return res.status(400).json({
-                error: "You are not authorized to perform this action."
+                error: "Photo could not be uploaded"
             });
         }
 
-        // Returning profile (without password and salt)
-        user.hashed_password = undefined;
-        user.salt = undefined;
-        res.json({ user });
+        // Update profile
+        let user = req.profile;
+        user = _.extend(user, fields);
+        user.updated = Date.now();
+
+        // If a photo is being update, send to database
+        if (files.photo) {
+            user.photo.data = fs.readFileSync(files.photo.path);
+            user.photo.contentType = files.photo.type;
+        }
+
+        // Save to database
+        user.save((err, result) => {
+
+            // Error handling
+            if (err) {
+                return res.status(400).json({
+                    error: err
+                })
+            }
+
+            // Hide password and salt, respond to client
+            user.hashed_password = undefined;
+            user.salt = undefined;
+            res.json(user);
+        })
     });
+};
+
+// Process photos seperately for faster load times
+exports.userPhoto = (req, res, next) => {
+
+    if (req.profile.photo.data) {
+        res.set(('Content-Type', req.profile.photo.contentType));
+        return res.send(req.profile.photo.data);
+    }
+    next();
 };
 
 // Delete user

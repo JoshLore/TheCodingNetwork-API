@@ -24,12 +24,20 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    updated: Date
+    updated: Date,
+    photo: {
+        data: Buffer,
+        contentType: String
+    },
+    about: {
+        type: String,
+        trim: true
+    }
 });
 
 // Virtual field for hashing a user's new password
 userSchema.virtual('password')
-    .set(function(password) {
+    .set(function (password) {
         // Temporary variable for password to hash
         this._password = password;
         // Generate a timestamp
@@ -37,7 +45,7 @@ userSchema.virtual('password')
         // Encrypt Password
         this.hashed_password = this.encryptPassword(password);
     })
-    .get(function() {
+    .get(function () {
         return this._password;
     });
 
@@ -47,13 +55,13 @@ userSchema.methods = {
 
     // Authenticate if password given matches password in database
     // Returns true if passwords match
-    authenticate: function(plainText) {
+    authenticate: function (plainText) {
         return this.encryptPassword(plainText) === this.hashed_password;
     },
 
     // Encyption for passwords
-    encryptPassword: function(password) {
-        if(!password) return "";
+    encryptPassword: function (password) {
+        if (!password) return "";
         try {
             return crypto.createHmac('sha1', this.salt)
                 .update(password)
