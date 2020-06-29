@@ -273,3 +273,25 @@ exports.removeFollower = (req, res) => {
             res.json(result);
         });
 };
+
+// Find users that aren't being followed by logged in user
+exports.findPeople = (req, res) => {
+
+    // Gathers all currently following users + the user himself
+    let following = req.profile.following;
+    following.push(req.profile._id);
+
+    // Get all users, not including already followed users
+    User.find({ _id: { $nin: following } }, (err, users) => {
+
+        // Handling errors
+        if (err) {
+            return res.status(400).json({
+                error: err
+            });
+        }
+
+        res.json(users);
+        // Only returning name, the rest we can get from Id if needed
+    }).select('name');
+}
