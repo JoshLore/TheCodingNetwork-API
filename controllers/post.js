@@ -203,6 +203,123 @@ exports.photo = (req, res, next) => {
     return res.send(req.post.photo.data);
 };
 
+// Return single post from Id
 exports.singlePost = (req, res) => {
     return res.json(req.post);
-}
+};
+
+// Add one like to user
+exports.like = (req, res) => {
+
+    // Add like to server
+    Post.findByIdAndUpdate(req.body.postId, { $push: { likes: req.body.userId } }, { new: true }).exec(
+        (err, result) => {
+
+            // Handling errors
+            if (err) {
+                return res.status(400).json({
+                    error: err
+                });
+                // Return new like list
+            } else {
+                res.json(result);
+            }
+        }
+    );
+};
+
+// Remove one like from user
+exports.unlike = (req, res) => {
+
+    // Remove like from server
+    Post.findByIdAndUpdate(req.body.postId, { $pull: { likes: req.body.userId } }, { new: true }).exec(
+        (err, result) => {
+
+            // Handling errors
+            if (err) {
+                return res.status(400).json({
+                    error: err
+                });
+                // Return new like list
+            } else {
+                res.json(result);
+            }
+        }
+    );
+};
+
+// Add comment to post
+exports.comment = (req, res) => {
+    let comment = req.body.comment;
+    comment.postedBy = req.body.userId;
+
+    // Add new comment to server
+    Post.findByIdAndUpdate(req.body.postId, { $push: { comments: comment } }, { new: true })
+        .populate('comments.postedBy', '_id name')
+        .populate('postedBy', '_id name')
+        .exec((err, result) => {
+
+            // Handling errors
+            if (err) {
+                return res.status(400).json({
+                    error: err
+                });
+            } else {
+                res.json(result);
+            }
+        });
+};
+
+// Delete comment from post
+exports.uncomment = (req, res) => {
+    let comment = req.body.comment;
+
+    // Remove comment from server
+    Post.findByIdAndUpdate(req.body.postId, { $pull: { comments: { _id: comment._id } } }, { new: true })
+        .populate('comments.postedBy', '_id name')
+        .populate('postedBy', '_id name')
+        .exec((err, result) => {
+
+            // Handling errors
+            if (err) {
+                return res.status(400).json({
+                    error: err
+                });
+            } else {
+                res.json(result);
+            }
+        });
+};
+
+// Update comment
+exports.updateComment = (req, res) => {
+    let comment = req.body.comment;
+
+    // Update comment from server
+    Post.findByIdAndUpdate(req.body.postId, { $pull: { comments: { _id: comment._id } } }).exec((err, result) => {
+        if (err) {
+            return res.status(400).json({
+                error: err
+            });
+        } else {
+
+            // Tricky: Basically just getting new comment back
+            Post.findByIdAndUpdate(
+                req.body.postId,
+                { $push: { comments: comment, updated: new Date() } },
+                { new: true }
+            )
+                .populate('comments.postedBy', '_id name')
+                .populate('postedBy', '_id name')
+                .exec((err, result) => {
+                    if (err) {
+                        return res.status(400).json({
+                            error: err
+                        });
+                    } else {
+                        res.json(result);
+                    }
+                });
+        }
+    });
+};
