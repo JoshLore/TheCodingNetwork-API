@@ -8,7 +8,10 @@ exports.postById = (req, res, next, id) => {
 
     // Search for post in database
     Post.findById(id)
-        .populate("postedBy", "_id name")
+        .populate('postedBy', '_id name')
+        .populate('comments.postedBy', '_id name')
+        .populate('postedBy', '_id name role')
+        .select('_id title body created likes comments photo')
         .exec((err, post) => {
 
             // Error handling
@@ -24,39 +27,28 @@ exports.postById = (req, res, next, id) => {
         });
 };
 
-// Get all posts
-// exports.getPosts = (req, res) => {
-//     const posts = Post.find()
-//         .populate("postedBy", "_id name")
-//         .select("_id title body created")
-//         .sort({ created: -1 })
-//         .then((posts) => {
-//             res.json(posts)
-//         })
-//         .catch(err => console.log(err));
-// };
-
 // PAGINATION! Get all posts
 exports.getPosts = async (req, res) => {
-    // get current page from req.query or use default value of 1
+    // Get current page from req.query or use default value of 1
     const currentPage = req.query.page || 1;
-    // return 3 posts per page
-    const perPage = 3;
+    // Return 6 posts per page
+    const perPage = 6;
     let totalItems;
 
     const posts = await Post.find()
         // countDocuments() gives you total count of posts
         .countDocuments()
+        // Shorten that to perPage
         .then(count => {
             totalItems = count;
             return Post.find()
                 .skip((currentPage - 1) * perPage)
-                .populate("comments", "text created")
-                .populate("comments.postedBy", "_id name")
-                .populate("postedBy", "_id name")
-                .sort({ created: -1 })
+                .populate('comments', 'text created')
+                .populate('comments.postedBy', '_id name')
+                .populate('postedBy', '_id name')
+                .select('_id title body likes created')
                 .limit(perPage)
-                .select("_id title body likes created");
+                .sort({ created: -1 });
         })
         .then(posts => {
             res.status(200).json(posts);
@@ -108,7 +100,8 @@ exports.postsByUser = (req, res) => {
 
     // Find all posts by user
     Post.find({ postedBy: req.profile._id })
-        .populate("postedBy", "_id name")
+        .populate('postedBy', '_id name')
+        .select('_id title body created likes')
         .sort({ created: -1 })
         .exec((err, posts) => {
 
@@ -127,9 +120,12 @@ exports.postsByUser = (req, res) => {
 // Checks if post was made by currently logged in user
 exports.isPoster = (req, res, next) => {
     let sameUser = req.post && req.auth && req.post.postedBy._id == req.auth._id;
+    let adminUser = req.post && req.auth && req.auth.role === 'admin';
+
+    let isPoster = sameUser || adminUser;
 
     // If not authorized user, handle unauthorized error
-    if (!sameUser) {
+    if (!isPoster) {
         return res.status(403).json({
             error: "User is not authorized."
         });
@@ -147,7 +143,7 @@ exports.updatePost = (req, res, next) => {
         // Error handling
         if (err) {
             return res.status(400).json({
-                error: "Photo could not be uploaded"
+                error: 'Photo could not be uploaded'
             });
         }
 
@@ -169,12 +165,12 @@ exports.updatePost = (req, res, next) => {
             if (err) {
                 return res.status(400).json({
                     error: err
-                })
+                });
             }
 
             // Hide password and salt, respond to client
             res.json(post);
-        })
+        });
     });
 };
 
@@ -192,14 +188,14 @@ exports.deletePost = (req, res) => {
 
         // Post has been deleted
         res.json({
-            message: "Post deleted successfully!"
+            message: 'Post deleted successfully!'
         });
     });
 };
 
 // Sending photo to client
 exports.photo = (req, res, next) => {
-    res.set("Content-Type", req.post.photo.contentType);
+    res.set('Content-Type', req.post.photo.contentType);
     return res.send(req.post.photo.data);
 };
 
