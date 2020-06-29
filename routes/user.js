@@ -21,7 +21,7 @@ router.put('/user/unfollow', requireSignin, removeFollowing, removeFollower); //
 // Get routes
 router.get('/users', allUsers);
 router.get('/user/:userId', requireSignin, getUser);
-router.get('/user/photo/:userId', userPhoto);
+router.get('/user/photo/:userId', userPhoto); // Photo
 router.get('/user/findpeople/:userId', requireSignin, findPeople);
 
 // Put routes

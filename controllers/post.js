@@ -12,7 +12,7 @@ exports.postById = (req, res, next, id) => {
         .exec((err, post) => {
 
             // Error handling
-            if(err || !post) {
+            if (err || !post) {
                 return res.status(400).json({
                     error: err
                 });
@@ -28,9 +28,10 @@ exports.postById = (req, res, next, id) => {
 exports.getPosts = (req, res) => {
     const posts = Post.find()
         .populate("postedBy", "_id name")
-        .select("_id title body")
+        .select("_id title body created")
+        .sort({ created: -1 })
         .then((posts) => {
-            res.json({ posts: posts })
+            res.json(posts)
         })
         .catch(err => console.log(err));
 };
@@ -42,31 +43,28 @@ exports.createPost = (req, res, next) => {
     let form = new formidable.IncomingForm();
     form.keepExtensions = true;
     form.parse(req, (err, fields, files) => {
-
         // Error handling
-        if(err) {
+        if (err) {
             return res.status(400).json({
-                error: "Image could not be uploaded."
-            })
+                error: 'Image could not be uploaded.'
+            });
         }
-
-        // Created the post
         let post = new Post(fields);
-        post.postedBy = req.profile;
 
         // Removing password and salt for user
         req.profile.hashed_password = undefined;
         req.profile.salt = undefined;
+        post.postedBy = req.profile;
 
         // Initilize image for post
-        if(files.photo) {
+        if (files.photo) {
             post.photo.data = fs.readFileSync(files.photo.path);
             post.photo.contentType = files.photo.type;
         }
 
         // Create the post
         post.save((err, result) => {
-            if(err) {
+            if (err) {
                 return res.status(400).json({
                     error: err
                 });
@@ -75,7 +73,6 @@ exports.createPost = (req, res, next) => {
             res.json(result);
         });
     });
-
 };
 
 // Get all posts by certain user
@@ -84,7 +81,7 @@ exports.postsByUser = (req, res) => {
     // Find all posts by user
     Post.find({ postedBy: req.profile._id })
         .populate("postedBy", "_id name")
-        .sort("_created")
+        .sort({ created: -1 })
         .exec((err, posts) => {
 
             // Error handling
@@ -123,7 +120,7 @@ exports.updatePost = (req, res) => {
     post.save(err => {
 
         // Error handling
-        if(err) {
+        if (err) {
             return res.status(400).json({
                 error: err
             });
@@ -139,7 +136,7 @@ exports.deletePost = (req, res) => {
     post.remove((err, post) => {
 
         // Error handling
-        if(err) {
+        if (err) {
             return res.status(400).json({
                 error: err
             });
@@ -152,3 +149,12 @@ exports.deletePost = (req, res) => {
     });
 };
 
+// Sending photo to client
+exports.photo = (req, res, next) => {
+    res.set("Content-Type", req.post.photo.contentType);
+    return res.send(req.post.photo.data);
+};
+
+exports.singlePost = (req, res) => {
+    return res.json(req.post);
+}
