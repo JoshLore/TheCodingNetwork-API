@@ -110,23 +110,43 @@ exports.isPoster = (req, res, next) => {
     next();
 };
 
-// Update post
-exports.updatePost = (req, res) => {
-    let post = req.post;
-    post = _.extend(post, req.body);
-    post.updated = Date.now();
-
-    // Save post
-    post.save(err => {
+// Updates post
+exports.updatePost = (req, res, next) => {
+    let form = new formidable.IncomingForm();
+    form.keepExtensions = true;
+    form.parse(req, (err, fields, files) => {
 
         // Error handling
         if (err) {
             return res.status(400).json({
-                error: err
+                error: "Photo could not be uploaded"
             });
         }
 
-        res.json(post);
+        // Update post
+        let post = req.post;
+        post = _.extend(post, fields);
+        post.updated = Date.now();
+
+        // If a photo is being update, send to database
+        if (files.photo) {
+            post.photo.data = fs.readFileSync(files.photo.path);
+            post.photo.contentType = files.photo.type;
+        }
+
+        // Save to database
+        post.save((err, result) => {
+
+            // Error handling
+            if (err) {
+                return res.status(400).json({
+                    error: err
+                })
+            }
+
+            // Hide password and salt, respond to client
+            res.json(post);
+        })
     });
 };
 

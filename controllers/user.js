@@ -68,31 +68,6 @@ exports.getUser = (req, res) => {
     return res.json(req.profile);
 };
 
-// Update a user
-// exports.updateUser = (req, res, next) => {
-//     let user = req.profile;
-
-//     // Using lodash.extend to mutate the user
-//     user = _.extend(user, req.body);
-//     user.updated = Date.now();
-
-//     // Save to database
-//     user.save((err) => {
-
-//         // Error handling
-//         if (err) {
-//             return res.status(400).json({
-//                 error: "You are not authorized to perform this action."
-//             });
-//         }
-
-//         // Returning profile (without password and salt)
-//         user.hashed_password = undefined;
-//         user.salt = undefined;
-//         res.json({ user });
-//     });
-// };
-
 // Updates user profile
 exports.updateUser = (req, res, next) => {
     let form = new formidable.IncomingForm();
