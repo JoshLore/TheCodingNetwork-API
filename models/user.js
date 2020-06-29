@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const { v1: uuidv1 } = require('uuid');
 const crypto = require("crypto");
+const { ObjectId } = mongoose.Schema;
 
 // Schema for Users
 const userSchema = new mongoose.Schema({
@@ -32,7 +33,9 @@ const userSchema = new mongoose.Schema({
     about: {
         type: String,
         trim: true
-    }
+    },
+    following: [{ type: ObjectId, ref: "User" }],
+    followers: [{ type: ObjectId, ref: "User" }]
 });
 
 // Virtual field for hashing a user's new password

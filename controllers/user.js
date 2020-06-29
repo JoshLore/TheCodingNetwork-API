@@ -7,19 +7,26 @@ const formidable = require('formidable');
 exports.userById = (req, res, next, id) => {
 
     // Look in database for user with matching id
-    User.findById(id).exec((err, user) => {
+    User.findById(id)
 
-        // Checks whether user exists.
-        if (err || !user) {
-            return res.status(400).json({
-                error: "User not found"
-            })
-        }
+        // Return the following and followers
+        .populate('following', '_id name')
+        .populate('followers', '_id name')
 
-        // Adds profile object in req with user info
-        req.profile = user;
-        next();
-    });
+        // Return user object to the client
+        .exec((err, user) => {
+
+            // Checks whether user exists.
+            if (err || !user) {
+                return res.status(400).json({
+                    error: "User not found"
+                })
+            }
+
+            // Adds profile object in req with user info
+            req.profile = user;
+            next();
+        });
 };
 
 
@@ -152,4 +159,117 @@ exports.deleteUser = (req, res, next) => {
 
         res.json({ message: "User deleted successfully!" });
     });
-}
+};
+
+// Add a new following user
+exports.addFollowing = (req, res, next) => {
+
+    // Find following user
+    User.findByIdAndUpdate(
+
+        // Get following user
+        req.body.userId,
+
+        // Update user's following list
+        { $push: { following: req.body.followId } },
+        (err, result) => {
+
+            // Handling errors
+            if (err) {
+                return res.status(400).json({ error: err });
+            }
+
+            next();
+        });
+};
+
+// Add a follower to user
+exports.addFollower = (req, res) => {
+
+    // Find following user
+    User.findByIdAndUpdate(
+
+        // Get user's followId
+        req.body.followId,
+        // Update followers list
+        { $push: { followers: req.body.userId } },
+        // Return new updated data
+        { new: true }
+    )
+        // Return following and followers
+        .populate('following', '_id name')
+        .populate('followers', '_id name')
+
+        // Return user object to the client
+        .exec((err, result) => {
+
+            // Handling errors
+            if (err) {
+                return res.status(400).json({
+                    error: err
+                });
+            }
+
+            // Return user with updated list
+            result.hashed_password = undefined;
+            result.salt = undefined;
+            res.json(result);
+
+        });
+};
+
+// Unfollow a user
+exports.removeFollowing = (req, res, next) => {
+
+    // Find following user
+    User.findByIdAndUpdate(
+
+        // Get following user
+        req.body.userId,
+
+        // Remove following user
+        { $pull: { following: req.body.unfollowId } },
+        (err, result) => {
+
+            // Handling errors
+            if (err) {
+                return res.status(400).json({ error: err });
+            }
+
+            next();
+        }
+    );
+};
+
+
+// Remove a follower from user
+exports.removeFollower = (req, res) => {
+
+    // Find following user
+    User.findByIdAndUpdate(
+
+        // Get user's followId
+        req.body.unfollowId,
+        // Remove follower from followers list
+        { $pull: { followers: req.body.userId } },
+        // Return new updated data
+        { new: true }
+    )
+        // Return new following and followers list
+        .populate("following", "_id name")
+        .populate("followers", "_id name")
+        .exec((err, result) => {
+
+            // Handling errors
+            if (err) {
+                return res.status(400).json({
+                    error: err
+                });
+            }
+
+            // Return user with updated list
+            result.hashed_password = undefined;
+            result.salt = undefined;
+            res.json(result);
+        });
+};
