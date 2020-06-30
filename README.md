@@ -9,7 +9,7 @@ Built with Node.js. Server running  on MongoDB.
 ## Links
 
 
-  Visit the working website: [TheCoding.Network](https://thecoding.network/)
+  Visit the working website: [TheCoding.Network](http://thecoding.network/)
 
   Check out the frontend on GitHub: [TheCodingNetwork-Frontend](https://github.com/JoshLore/TheCodingNetwork-Frontend)
 
