@@ -35,7 +35,11 @@ const userSchema = new mongoose.Schema({
         trim: true
     },
     following: [{ type: ObjectId, ref: "User" }],
-    followers: [{ type: ObjectId, ref: "User" }]
+    followers: [{ type: ObjectId, ref: "User" }],
+    resetPasswordLink: {
+        data: String,
+        default: ""
+    }
 });
 
 // Virtual field for hashing a user's new password

@@ -28,6 +28,8 @@ PORT=8080
 JWT_SECRET=xxxxxx
 CLIENT_URL=http://localhost:3000
 REACT_APP_GOOGLE_CLIENT_ID=xxxxxx.apps.googleusercontent.com
+GOOGLE_EMAIL=xxxxxx@gmail.com
+GOOGLE_PASSWORD=xxxxxxxxxxxx
 ```
 
 
