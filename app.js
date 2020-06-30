@@ -15,9 +15,9 @@ dotenv.config();
 
 // DB
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-        .then(() => console.log('DB Connected'));
-    
-mongoose.connection.on('error', err =>{
+    .then(() => console.log('DB Connected'));
+
+mongoose.connection.on('error', err => {
     console.log(`DB Connection Error: ${err.message}`);
 });
 
@@ -27,11 +27,11 @@ const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
 
 // apiDocs
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
     fs.readFile('docs/apiDocs.json', (err, data) => {
 
         // Error handling
-        if(err) {
+        if (err) {
             res.status(400).json({
                 error: err
             });
@@ -49,11 +49,11 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(expressValidator());
 app.use(cors());
-app.use('/', postRoutes);
-app.use('/', authRoutes);
-app.use('/', userRoutes);
-app.use(function(err, req, res, next) {
-    if(err.name === "UnauthorizedError") {
+app.use('/api', postRoutes);
+app.use('/api', authRoutes);
+app.use('/api', userRoutes);
+app.use(function (err, req, res, next) {
+    if (err.name === "UnauthorizedError") {
         res.status(401).json({ error: "Unauthorized user. Please login." });
     }
 })
