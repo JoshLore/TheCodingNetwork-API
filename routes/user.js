@@ -9,7 +9,8 @@ const { userById,
     addFollower,
     removeFollower,
     removeFollowing,
-    findPeople
+    findPeople,
+    hasAuthorization
 } = require("../controllers/user");
 const { requireSignin } = require('../controllers/auth');
 
@@ -25,11 +26,11 @@ router.get('/user/photo/:userId', userPhoto); // Photo
 router.get('/user/findpeople/:userId', requireSignin, findPeople);
 
 // Put routes
-router.put('/user/:userId', requireSignin, updateUser);
+router.put('/user/:userId', requireSignin, hasAuthorization, updateUser);
 
 
 // Delete routes
-router.delete('/user/:userId', requireSignin, deleteUser);
+router.delete('/user/:userId', requireSignin, hasAuthorization, deleteUser);
 
 // Param routes
 router.param("userId", userById); // Any route containing :userId will run the userById() method

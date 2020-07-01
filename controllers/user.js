@@ -32,12 +32,17 @@ exports.userById = (req, res, next, id) => {
 
 // Checks if the user has authorization
 exports.hasAuthorization = (req, res, next) => {
-    const authorized = req.profile && req.auth && req.profile._id === req.auth._id;
+    let sameUser = req.profile && req.auth && req.profile._id == req.auth._id;
+    let adminUser = req.profile && req.auth && req.profile.role == 'admin';
+
+    const authorized = sameUser || adminUser;
     if (!authorized) {
         return res.status(403).json({
             error: "User is not authorized to perform this action."
         });
     }
+
+    next();
 };
 
 // Get all users in database
@@ -56,7 +61,7 @@ exports.allUsers = (req, res) => {
         res.json(users);
     })
         // Only return name, email, and time of creation.
-        .select("name email updated created");
+        .select("name email updated created role");
 };
 
 // Get a single user

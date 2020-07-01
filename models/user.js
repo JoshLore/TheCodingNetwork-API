@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const { v1: uuidv1 } = require('uuid');
 const crypto = require("crypto");
 const { ObjectId } = mongoose.Schema;
+const Post = require("./post");
 
 // Schema for Users
 const userSchema = new mongoose.Schema({
@@ -39,6 +40,10 @@ const userSchema = new mongoose.Schema({
     resetPasswordLink: {
         data: String,
         default: ""
+    },
+    role: {
+        type: String,
+        default: "subscriber"
     }
 });
 
@@ -79,5 +84,11 @@ userSchema.methods = {
     }
 
 }
+
+// Method for deleting posts from people who's accounts have been deleted
+userSchema.pre("remove", function (next) {
+    Post.remove({ postedBy: this._id }).exec();
+    next();
+});
 
 module.exports = mongoose.model("User", userSchema);
